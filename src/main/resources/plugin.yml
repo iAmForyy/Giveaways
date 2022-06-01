@@ -1,0 +1,10 @@
+name: Giveaways
+version: '${project.version}'
+main: com.iamforyydev.giveaways.Giveaways
+authors: [ iAmForyyDev ]
+description: Minigame plugin
+
+commands:
+  giveaways:
+    description: main command.
+    usage: /<command>
