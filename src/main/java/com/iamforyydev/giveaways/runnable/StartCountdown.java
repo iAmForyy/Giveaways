@@ -3,12 +3,14 @@ package com.iamforyydev.giveaways.runnable;
 import com.iamforyydev.giveaways.Giveaways;
 import com.iamforyydev.giveaways.giveaways.Minigame;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.List;
+import java.util.Random;
+
 import static com.iamforyydev.giveaways.utils.StringUtils.c;
+import static com.iamforyydev.giveaways.utils.StringUtils.sendBroadcast;
 
 public class StartCountdown extends BukkitRunnable {
 
@@ -19,40 +21,47 @@ public class StartCountdown extends BukkitRunnable {
     public StartCountdown(Minigame minigame){
         this.plugin = Giveaways.getInstance();
         this.minigame = minigame;
-        this.countdown = 30;
+        this.countdown = 20;
     }
 
     public void startCountdown(){
         try{
             minigame.setStarted(true);
             runTaskTimer(plugin, 0, 20L);
-        }catch (IllegalStateException exception){
-            exception.printStackTrace();
-            Bukkit.getLogger().info("El task ya está iniciado!");
+        }catch (IllegalStateException thrown){
+            thrown.printStackTrace();
+            Bukkit.getLogger().info("Already task");
         }
     }
 
+    public void stopCountdown(){
+        minigame.getParticipants().clear();
+        minigame.setStarted(false);
+        cancel();
+        minigame.stop();
+    }
 
     @Override
     public void run() {
         if(countdown <= 0){
-            cancel();
-            if(minigame.getParticipants().size() == 0){
-                Bukkit.broadcastMessage(c("&cNadie ingresó al sorteo, por lo que nadie ganó!"));
-                return;
+            if(minigame.getParticipants().size() <= 1){
+                sendBroadcast("&cThere was no winner!");
+            }else{
+                int random = new Random().nextInt(minigame.getParticipants().size());
+                Player winner = minigame.getParticipants().get(random);
+                sendBroadcast(plugin.getConfig().getString("Messages.has_winner").replace("<player>", winner.getName()));
+                minigame.setStarted(false);
+                plugin.getConfig().getStringList("Settings.winner_commands").forEach(s ->
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s.replace("<player>", winner.getName())));
             }
-            for(Player participant : minigame.getParticipants()){
-                if(participant.getName().equals("iAmForyy_")){
-                    minigame.setStarted(false);
-                    participant.getInventory().addItem(new ItemStack(Material.DIAMOND, 2));
-                    Bukkit.broadcastMessage(c("&eFelicidades! el jugador &6"+participant.getName()+" &eha ganado"));
-                }
-                minigame.getParticipants().clear();
-            }
+            stopCountdown();
             return;
-        }else if(countdown == 10 || countdown == 15 || countdown == 30){
-            Bukkit.broadcastMessage(c("&eEl sorteo está a punto de iniciar, quedan &6"+countdown+" &esegundos para sortear"));
+        }else if(countdown == 10 || countdown == 15){
+                List<String> lista = plugin.getConfig().getStringList("Messages.announce");
+                lista.add(c("&eThe draw starts in: &6"+countdown));lista.add("");
+                lista.forEach(s -> sendBroadcast(s.replace("<seconds>", Integer.toString(countdown))));
         }
         countdown--;
     }
 }
+

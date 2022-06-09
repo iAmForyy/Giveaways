@@ -6,38 +6,30 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.iamforyydev.giveaways.utils.StringUtils.c;
-
 public class Minigame {
 
-    private final String name;
+    private final int id;
     private final List<Player> participants;
     private boolean isStarted;
-    private final StartCountdown countdown;
+    private StartCountdown countdown;
 
-    public Minigame(String name){
-        this.name = name;
+    public Minigame(int id){
+        this.id = id;
         this.participants = new ArrayList<>();
         this.isStarted = false;
         this.countdown = new StartCountdown(this);
-
     }
 
-    public void sendMessage(String message){
-        for(Player participant : participants){
-            participant.sendMessage(c(message));
-        }
+    public void stop(){
+        this.countdown = new StartCountdown(this);
     }
-
-
 
     public void start(){
-        this.setStarted(true);
-        this.countdown.startCountdown();
+        this.getCountdown().startCountdown();
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
     public List<Player> getParticipants() {

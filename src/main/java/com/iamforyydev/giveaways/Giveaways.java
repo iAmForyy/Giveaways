@@ -16,10 +16,12 @@ public final class Giveaways extends JavaPlugin {
     public void onEnable() {
         instance = this;
         minigames = new ArrayList<>();
-        minigames.add(new Minigame("default"));
+        minigames.add(new Minigame(0));
+
+        getConfig().options().copyDefaults(true);
+        saveDefaultConfig();
 
         getCommand("giveaways").setExecutor(new MainCommands());
-
     }
 
     public static Giveaways getInstance(){
@@ -28,7 +30,7 @@ public final class Giveaways extends JavaPlugin {
 
     public Minigame getMinigame(){
         for(Minigame minigame : minigames){
-            if(minigame.getName().equals("default")){
+            if(minigame.getId() == 0){
                 return minigame;
             }
         }

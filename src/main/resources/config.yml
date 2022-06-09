@@ -1,0 +1,20 @@
+Settings:
+  countdown: 60
+  winner_commands:
+    - "give <player> stone 10"
+    - "give <player> diamond 10"
+Messages:
+  announce:
+    - ""
+    - "&6&l          GIVEAWAY"
+    - "&eThe giveaway is about to start, "
+    - "&ejoin to win great rewards!"
+    - ""
+    - "Reward: &61,000 Coins"
+    - ""
+  announce_starting: "&eThe game start in &6<seconds> &esegundos."
+  announce_player_entered: "&6<player> entered the draw!"
+  announce_player_leave: "&6<player> came out of the draw!"
+  has_winner: "&eEl jugador &6<player> &eis the winner of the raffle!"
+  is_started: "&eThe draw is already started"
+  already_in_game: "&cYou are already in the draw!"
